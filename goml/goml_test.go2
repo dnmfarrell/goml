@@ -1,0 +1,148 @@
+package goml
+
+import (
+	"strings"
+	"testing"
+)
+
+func TestEmpty(t *testing.T) {
+	var l []int;
+	if !Empty(l) {
+		t.Error("Empty marks an unitialized slice as not empty")
+	}
+	if !Empty([]string{}) {
+		t.Error("Empty marks an empty slice as not empty")
+	}
+	if Empty([]string{"f"}) {
+		t.Error("Empty marks an non-empty slice as empty")
+	}
+}
+
+func TestTail(t *testing.T) {
+	got := len(Tail([]int{1,2,3}))
+	if got != 2 {
+		t.Errorf("Tail returns a %d len slice instead of the tail", got)
+	}
+	got = len(Tail([]int{}))
+	if got != 0 {
+		t.Errorf("Tail returns a %d len slice from an empty slice", got)
+	}
+}
+
+func TestLength(t *testing.T) {
+	got := Length([]int{1,2,3})
+	if got != 3 {
+		t.Errorf("Length returns %d for a 3 element slice", got)
+	}
+	got = Length([]int{})
+	if got != 0 {
+		t.Errorf("Length returns %d for an empty slice", got)
+	}
+}
+
+func TestHead(t *testing.T) {
+	got := Head([]int{1,2,3})
+	if got != 1 {
+		t.Errorf("Head returns %d from [1,2,3]", got)
+	}
+	got = Head([]int{})
+	if got != 0 {
+		t.Errorf("Head returns %d for an empty slice", got)
+	}
+}
+
+func TestCons(t *testing.T) {
+	got := Cons(1, []int{2,3})
+	if len(got) != 3 {
+		t.Errorf("Cons returns a %d len list instead of 3", len(got))
+	}
+	if got[0] != 1 {
+		t.Errorf("Cons returns %d as the 1st element of the new slice", got[0])
+	}
+	if got[1] != 2 {
+		t.Errorf("Cons returns %d as the 2nd element of the new slice", got[1])
+	}
+}
+
+func TestDrop(t *testing.T) {
+	words := []string{"foo", "bar", "baz"}
+	got := Drop(2, words)
+	if "baz" != ConcatStr(got) {
+		t.Errorf("Drop 2 returns %s instead of baz", JoinStr(got, ", "))
+	}
+	got = Drop(0, words)
+	if ConcatStr(words) != ConcatStr(got) {
+		t.Errorf("Drop 0 returns '%s' instead of %s", JoinStr(got, ", "),
+			JoinStr(words, ", "))
+	}
+}
+
+func TestTake(t *testing.T) {
+	words := []string{"foo", "bar", "baz"}
+	got := Take(2, words)
+	if "foobar" != ConcatStr(got) {
+		t.Errorf("Take 2 returns %s instead of foo, bar", JoinStr(got, ", "))
+	}
+	got = Take(0, words)
+	if "" != ConcatStr(got) {
+		t.Errorf("Take 0 returns '%s' instead of []", JoinStr(got, ", "))
+	}
+}
+
+func TestLast(t *testing.T) {
+	words := []string{"foo", "bar", "baz"}
+	got := Last(words)
+	if "baz" != got {
+		t.Errorf("Last [%s] returns %s instead of baz", JoinStr(words, ", "), got)
+	}
+	got = Last([]string{"baz"})
+	if "baz" != got {
+		t.Errorf("Last [baz] returns %s instead of baz", got)
+	}
+	got = Last([]string{})
+	if "" != got {
+		t.Errorf("Last [] returns %s instead of \"\"", got)
+	}
+}
+
+func TestReverse(t *testing.T) {
+	words := []string{"foo", "bar", "baz"}
+	got := Reverse(words)
+	if "bazbarfoo" != ConcatStr(got) {
+		t.Errorf("Reverse returns [%s] instead of [baz, bar, foo]",
+			JoinStr(got, ", "))
+	}
+	got = Reverse([]string{"foo"})
+	if "foo" != ConcatStr(got) {
+		t.Errorf("Reverse returns [%s] instead of [foo]",	JoinStr(got, ", "))
+	}
+	got = Reverse([]string{})
+	if "" != ConcatStr(got) {
+		t.Errorf("Reverse returns [%s] instead of []", JoinStr(got, ", "))
+	}
+}
+
+func TestFilter(t *testing.T) {
+	bigNumF := func (x int) bool { return x > 9 }
+	got := Filter(bigNumF, []int{-5, 20, 9, 72})
+	if len(got) != 2 {
+		t.Errorf("Filter bigNumF returns a %d len list instead of 2", len(got))
+	}
+	got = Filter(bigNumF, []int{-5, 2, 9, 2})
+	if len(got) != 0 {
+		t.Errorf("Filter bigNumF returns a %d len list instead of 0", len(got))
+	}
+	got = Filter(bigNumF, []int{})
+	if len(got) != 0 {
+		t.Errorf("Filter bigNumF returns a %d len list instead of 0", len(got))
+	}
+}
+
+func TestMap(t *testing.T) {
+	toUpperF := func (s string) string { return  strings.ToUpper(s) }
+	got := Map(toUpperF, []string{"foo", "bar", "baz"})
+	if "FOOBARBAZ" != ConcatStr(got) {
+		t.Errorf("Map toUpper returned [%s] instead of [FOO, BAR, BAZ]",
+			JoinStr(got, ", "))
+	}
+}

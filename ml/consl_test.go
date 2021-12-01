@@ -15,17 +15,17 @@ func TestConsLFilterInf(t *testing.T) {
 	if xs.Tail().Head() != 1 {
 		t.Errorf("Tail().Head() twice returns %d", xs.Tail().Head())
 	}
-	evens := xs.Filter(func (x int) bool { return x % 2 == 0 }).Take(3)
+	evens := xs.Filter(func(x int) bool { return x%2 == 0 }).Take(3)
 	if evens.Length() != 3 {
 		t.Errorf("Take returns the wrong sized list: %d", evens.Length())
 	}
-	if evens.Head() % 2 != 0 {
+	if evens.Head()%2 != 0 {
 		t.Errorf("evens.Head is not even: %d", evens.Head())
 	}
-	if evens.Tail().Head() % 2 != 0 {
+	if evens.Tail().Head()%2 != 0 {
 		t.Errorf("evens.Tail.Head is not even: %d", evens.Tail().Head())
 	}
-	if evens.Last() % 2 != 0 {
+	if evens.Last()%2 != 0 {
 		t.Errorf("evens.Last is not even: %d", evens.Last())
 	}
 }

@@ -20,7 +20,7 @@ func TestEmpty(t *testing.T) {
 	if !nRev.Empty() {
 		t.Errorf("reverse [] is not empty")
 	}
-	bigInt := func (x int) bool { return x > 7 }
+	bigInt := func(x int) bool { return x > 7 }
 	nFtrd := Nil[int]{}.Filter(bigInt)
 	if !nFtrd.Empty() {
 		t.Errorf("filter [] is not empty")

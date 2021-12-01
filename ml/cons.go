@@ -8,7 +8,7 @@ type Cons[A any] struct {
 }
 
 // Empty always returns false as by definition a Cons cell is not empty
-func (_ Cons[A]) Empty() bool { return false}
+func (_ Cons[A]) Empty() bool { return false }
 
 // Lazy always returns false as by definition a Cons cell has already been
 // evaluated.
@@ -21,7 +21,7 @@ func (c Cons[A]) Head() A { return c.head }
 func (c Cons[A]) Tail() List[A] { return c.tail }
 
 // Length returns the number of elements in the List
-func (c Cons[A]) Length() int {	return 1 + c.Tail().Length() }
+func (c Cons[A]) Length() int { return 1 + c.Tail().Length() }
 
 // Drop discards the first n elements of a List
 func (c Cons[A]) Drop(n int) List[A] {
@@ -34,7 +34,7 @@ func (c Cons[A]) Drop(n int) List[A] {
 // Take returns the first n elements of a List in a new List
 func (c Cons[A]) Take(n int) List[A] {
 	if n > 1 {
-		return Cons[A]{c.Head(), c.Tail().Take(n -1)}
+		return Cons[A]{c.Head(), c.Tail().Take(n - 1)}
 	}
 	return Cons[A]{c.Head(), Nil[A]{}}
 }
@@ -65,7 +65,7 @@ func (c Cons[A]) Concat(l List[A]) List[A] {
 
 // Reverse reverses the order of the elements of a List, returning a new List
 func (c Cons[A]) Reverse() List[A] {
-	return c.Tail().Reverse().Concat( Cons[A]{c.Head(), Nil[A]{}} )
+	return c.Tail().Reverse().Concat(Cons[A]{c.Head(), Nil[A]{}})
 }
 
 // Filter applies a bool function to a List, returning a new List comprised

@@ -47,7 +47,7 @@ func TestConsReverse(t *testing.T) {
 
 func TestConsFilter(t *testing.T) {
 	xs := Cons[int]{6, Cons[int]{7, Cons[int]{8, Nil[int]{}}}}
-	bigInt := func (x int) bool { return x > 7 }
+	bigInt := func(x int) bool { return x > 7 }
 	ys := xs.Filter(bigInt)
 	if ys.Head() != 8 {
 		t.Errorf("[6,7,8].Filter >7.Head returns: %d", ys.Head())

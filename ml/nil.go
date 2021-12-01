@@ -1,7 +1,7 @@
 package ml
 
 // Nil represents an empty List
-type Nil[A any] struct { }
+type Nil[A any] struct{}
 
 // Empty always return true, as Nil is empty by definition
 func (_ Nil[A]) Empty() bool { return true }
@@ -31,10 +31,10 @@ func (_ Nil[A]) Init() List[A] { panic("cannot Init() an empty List") }
 func (_ Nil[A]) Last() A { panic("cannot Last() an empty List") }
 
 // Reverse returns itself
-func (n Nil[A]) Reverse() List[A] {	return n }
+func (n Nil[A]) Reverse() List[A] { return n }
 
 // Concat returns the List parameter it receives unchanged
 func (_ Nil[A]) Concat(l List[A]) List[A] { return l }
 
 // Filter returns itself
-func (n Nil[A]) Filter(func(_ A) bool) List[A] {return n }
+func (n Nil[A]) Filter(func(_ A) bool) List[A] { return n }

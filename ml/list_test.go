@@ -6,7 +6,7 @@ import (
 
 func TestFoldl(t *testing.T) {
 	n := Nil[string]{}
-	AccStrlen := func (acc int, x string) int { return acc + len(x) }
+	AccStrlen := func(acc int, x string) int { return acc + len(x) }
 	x := Foldl[int, string](AccStrlen, 0, n)
 	if x != 0 {
 		t.Errorf("Foldl f 0 Nil returns %d", x)
@@ -28,7 +28,7 @@ func TestFoldl(t *testing.T) {
 
 func TestScan(t *testing.T) {
 	n := Nil[string]{}
-	AccStrlen := func (acc int, x string) int { return acc + len(x) }
+	AccStrlen := func(acc int, x string) int { return acc + len(x) }
 	x := Scan[int, string](AccStrlen, 0, n)
 	if x.Head() != 0 {
 		t.Errorf("Scan f 0 Nil returns %v", x)
@@ -78,7 +78,7 @@ func TestSlice2List(t *testing.T) {
 	if l.Head() != "foo" {
 		t.Errorf("[foo] slice not converted into [%s]", l.Head())
 	}
-	l = Slice2List([]string{"foo","bar"})
+	l = Slice2List([]string{"foo", "bar"})
 	if l.Length() != 2 {
 		t.Errorf("[foo,bar] converted into a %d length list", l.Length())
 	}
@@ -92,8 +92,8 @@ func TestSlice2List(t *testing.T) {
 
 func TestMap(t *testing.T) {
 	ints := Cons[int]{3, Cons[int]{4, Nil[int]{}}}
-	doubleInt := func (x int) int { return x * 2 }
-	got := Map[int,int](doubleInt, ints)
+	doubleInt := func(x int) int { return x * 2 }
+	got := Map[int, int](doubleInt, ints)
 	if got.Head() != 6 {
 		t.Errorf("Map doubleInt Head returns: %d", got.Head())
 	}
@@ -104,8 +104,8 @@ func TestMap(t *testing.T) {
 
 func TestMapL(t *testing.T) {
 	words := Slice2List([]string{"foo", "bar", "bazz"})
-	strlen := func (x string) int { return len(x) }
-	lens := MapL[string,int](strlen, words)
+	strlen := func(x string) int { return len(x) }
+	lens := MapL[string, int](strlen, words)
 	if lens.Head() != 3 {
 		t.Errorf("[foo,bar,baz].MapL strlen.Head returns: %d", lens.Head())
 	}
@@ -113,7 +113,7 @@ func TestMapL(t *testing.T) {
 		t.Errorf("[foo,bar,baz].MapL strlen.Last returns: %d", lens.Last())
 	}
 	negInts := RangeInf[int]{-1, -1}.Eval()
-	abs := func (x int) int { return x * -1 }
+	abs := func(x int) int { return x * -1 }
 	posInts := MapL[int, int](abs, negInts)
 	if posInts.Head() != 1 {
 		t.Errorf("[-1,-2..].MapL abs.Head returns: %d", posInts.Last())

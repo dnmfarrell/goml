@@ -26,6 +26,28 @@ func TestFoldl(t *testing.T) {
 	}
 }
 
+func TestFoldr(t *testing.T) {
+	n := Nil[string]{}
+	strlen := func(x string, acc int) int { return acc + len(x) }
+	x := Foldr[string, int](strlen, 0, n)
+	if x != 0 {
+		t.Errorf("Foldr f 0 Nil returns %d", x)
+	}
+	words := Slice2List([]string{"foo", "bar", "baz"})
+	y := Foldr[string, int](strlen, 0, words)
+	if y != 9 {
+		t.Errorf("Foldr f 0 [foo,bar,baz] returns %d", y)
+	}
+	z := Foldr[string, int](strlen, 0, words.Tail())
+	if z != 6 {
+		t.Errorf("Foldr f 0 [bar,baz] returns %d", z)
+	}
+	a := Foldr[string, int](strlen, 0, Cons[string]{words.Head(), n})
+	if a != 3 {
+		t.Errorf("Foldr f 0 [foo] returns %d", a)
+	}
+}
+
 func TestScan(t *testing.T) {
 	n := Nil[string]{}
 	AccStrlen := func(acc int, x string) int { return acc + len(x) }
@@ -66,27 +88,45 @@ func TestScan(t *testing.T) {
 	}
 }
 
-func TestSlice2List(t *testing.T) {
-	l := Slice2List([]string{})
-	if !l.Empty() {
-		t.Error("empty slice does not return an empty list")
+func TestDrop(t *testing.T) {
+	xs := RangeInf[int]{1, 1}.Eval()
+	ys := Drop(5, xs)
+	if ys.Head() != 6 {
+		t.Errorf("Drop(5, [1..]).Head returns: %d", ys.Head())
 	}
-	l = Slice2List([]string{"foo"})
-	if l.Length() != 1 {
-		t.Errorf("[foo] returns a %d length list", l.Length())
+	zs := Drop[int](1, Nil[int]{})
+	if !zs.Empty() {
+		t.Error("Drop(1, Nil) does not return Nil")
 	}
-	if l.Head() != "foo" {
-		t.Errorf("[foo] slice not converted into [%s]", l.Head())
+}
+
+func TestTake(t *testing.T) {
+	xs := RangeInf[int]{1, 1}.Eval()
+	ys := Take(5, xs)
+	if ys.Head() != 1 {
+		t.Errorf("Take(5, [1..]).Head returns: %d", ys.Head())
 	}
-	l = Slice2List([]string{"foo", "bar"})
-	if l.Length() != 2 {
-		t.Errorf("[foo,bar] converted into a %d length list", l.Length())
+	if ys.Last() != 5 {
+		t.Errorf("Take(5, [1..]).Last returns: %d", ys.Last())
 	}
-	if l.Head() != "foo" {
-		t.Errorf("[foo,bar] slice Head is %s", l.Head())
+	zs := Take[int](1, Nil[int]{})
+	if !zs.Empty() {
+		t.Error("Take(1, Nil) does not return Nil")
 	}
-	if l.Last() != "bar" {
-		t.Errorf("[foo,bar] slice Last is %s", l.Last())
+}
+
+func TestReverse(t *testing.T) {
+	xs := Range[int]{1, 1, 10}.Eval()
+	ys := Reverse(xs)
+	if ys.Head() != 10 {
+		t.Errorf("Reverse([1..]).Head returns: %d", ys.Head())
+	}
+	if ys.Last() != 1 {
+		t.Errorf("Reverse(5, [1..]).Last returns: %d", ys.Last())
+	}
+	zs := Reverse[int](Nil[int]{})
+	if !zs.Empty() {
+		t.Error("Reverse(Nil) does not return Nil")
 	}
 }
 
@@ -102,51 +142,14 @@ func TestMap(t *testing.T) {
 	}
 }
 
-func TestMapL(t *testing.T) {
-	words := Slice2List([]string{"foo", "bar", "bazz"})
-	strlen := func(x string) int { return len(x) }
-	lens := MapL[string, int](strlen, words)
-	if lens.Head() != 3 {
-		t.Errorf("[foo,bar,baz].MapL strlen.Head returns: %d", lens.Head())
+func TestFilter(t *testing.T) {
+	xs := Cons[int]{6, Cons[int]{7, Cons[int]{8, Nil[int]{}}}}
+	bigInt := func(x int) bool { return x > 7 }
+	ys := Filter[int](bigInt, xs)
+	if ys.Head() != 8 {
+		t.Errorf("[6,7,8].Filter >7.Head returns: %d", ys.Head())
 	}
-	if lens.Last() != 4 {
-		t.Errorf("[foo,bar,baz].MapL strlen.Last returns: %d", lens.Last())
-	}
-	negInts := RangeInf[int]{-1, -1}.Eval()
-	abs := func(x int) int { return x * -1 }
-	posInts := MapL[int, int](abs, negInts)
-	if posInts.Head() != 1 {
-		t.Errorf("[-1,-2..].MapL abs.Head returns: %d", posInts.Last())
-	}
-	if posInts.Tail().Head() != 2 {
-		t.Errorf("[-1,-2..].MapL abs.Tail.Head returns: %d", posInts.Tail().Head())
-	}
-}
-
-func TestQsort(t *testing.T) {
-	xs := Cons[int]{8, Cons[int]{3, Cons[int]{12, Nil[int]{}}}}
-	ys := Qsort[int](xs)
-	if ys.Head() != 3 {
-		t.Errorf("Qsort [8,3,12] Head is: %d", ys.Head())
-	}
-	if ys.Tail().Head() != 8 {
-		t.Errorf("Qsort [8,3,12] Tail.Head is: %d", ys.Head())
-	}
-	if ys.Last() != 12 {
-		t.Errorf("Qsort [8,3,12] Last is: %d", ys.Last())
-	}
-}
-
-func TestQsortR(t *testing.T) {
-	xs := Cons[int]{8, Cons[int]{3, Cons[int]{12, Nil[int]{}}}}
-	ys := QsortR[int](xs)
-	if ys.Head() != 12 {
-		t.Errorf("QsortR [8,3,12] Head is: %d", ys.Head())
-	}
-	if ys.Tail().Head() != 8 {
-		t.Errorf("QsortR [8,3,12] Tail.Head is: %d", ys.Head())
-	}
-	if ys.Last() != 3 {
-		t.Errorf("QsortR [8,3,12] Last is: %d", ys.Last())
+	if Length(ys) != 1 {
+		t.Errorf("[6,7,8].Filter >7.Length returns: %d", Length(ys))
 	}
 }
